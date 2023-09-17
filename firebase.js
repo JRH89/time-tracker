@@ -2,7 +2,9 @@ import { initializeApp } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
 import { getStorage } from 'firebase/storage'
-
+import firebase from 'firebase/app'
+import 'firebase/firestore'
+import 'firebase/auth'
 const firebaseConfig = {
 	apiKey: process.env.NEXT_PUBLIC_APIKEY,
 	authDomain: process.env.NEXT_PUBLIC_AUTHDOMAIN,
