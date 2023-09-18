@@ -4,19 +4,22 @@ import { useAuth } from '@/context/AuthProvider'
 import { signOut } from 'firebase/auth'
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
 import { auth, db } from '../../../firebase'
-import { getDoc, collection, query, addDoc, onSnapshot } from 'firebase/firestore' // Use getDocs instead of collection
+import { doc, deleteDoc, collection, query, addDoc, onSnapshot, updateDoc } from 'firebase/firestore'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 const UserDashboard = () => {
 	const { currentUser } = useAuth()
 	const [projects, setProjects] = useState([])
+	const [completedProjects, setCompletedProjects] = useState([])
 	const [newProject, setNewProject] = useState({ title: '', description: '', hourlyRate: 0 })
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
 	const router = useRouter()
 	const [showProductForm, setShowProductForm] = useState(false)
 	const [showProjectList, setShowProjectList] = useState(true)
+	const [errorMessage, setErrorMessage] = useState('')
+
 	useEffect(() => {
 		if (currentUser) {
 			// Firestore reference to the user's projects collection
@@ -27,7 +30,10 @@ const UserDashboard = () => {
 
 			const unsubscribe = onSnapshot(q, (snapshot) => {
 				const updatedProjects = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
-				setProjects(updatedProjects)
+				const inProgressProjects = updatedProjects.filter((project) => !project.completed)
+				const completedProjects = updatedProjects.filter((project) => project.completed)
+				setProjects(inProgressProjects)
+				setCompletedProjects(completedProjects)
 			})
 
 			return () => unsubscribe()
@@ -40,7 +46,7 @@ const UserDashboard = () => {
 			const projectsRef = collection(db, 'users', currentUser.uid, 'projects')
 
 			// Add a new project to Firestore
-			await addDoc(projectsRef, newProject)
+			await addDoc(projectsRef, { ...newProject, completed: false })
 
 			// Clear the form
 			setNewProject({ title: '', description: '', hourlyRate: 0 })
@@ -58,7 +64,7 @@ const UserDashboard = () => {
 	const handleSignup = async () => {
 		try {
 			await createUserWithEmailAndPassword(auth, email, password)
-		} catch {
+		} catch (error) {
 			setErrorMessage(error.message)
 		}
 	}
@@ -76,98 +82,218 @@ const UserDashboard = () => {
 		}
 	}
 
+	const handleMarkAsComplete = async (projectId) => {
+		try {
+			// Find the project to mark as complete
+			const projectToComplete = projects.find((project) => project.id === projectId)
+
+			// Update the project's "completed" status in Firestore
+			const projectRef = doc(db, 'users', currentUser.uid, 'projects', projectId)
+			await updateDoc(projectRef, {
+				completed: true, // Set the "completed" field to true
+			})
+
+			// Remove the project from the current list
+			const updatedProjects = projects.filter((project) => project.id !== projectId)
+			setProjects(updatedProjects)
+
+			// Add the project to the completed projects list
+			setCompletedProjects([...completedProjects, projectToComplete])
+		} catch (error) {
+			console.error('Error marking project as complete:', error.message)
+		}
+	}
+
+	const handleRemove = async (projectId) => {
+		try {
+			// Remove the project from Firestore
+			const projectRef = doc(db, 'users', currentUser.uid, 'projects', projectId)
+			await deleteDoc(projectRef)
+
+			// Remove the project from the current list
+			const updatedProjects = projects.filter((project) => project.id !== projectId)
+			setProjects(updatedProjects)
+		} catch (error) {
+			console.error('Error removing project:', error.message)
+		}
+	}
+
 	return (
-		<div className="flex flex-col items-center justify-center h-screen">
+		<div className="bg-gradient-to-b from-blue-400 to-purple-600 min-h-screen flex justify-center items-center p-2">
 			{!currentUser && (
-				<div className='flex flex-col items-center gap-3 text-center'>
-					<h1>Login</h1>
+				<div className="flex flex-col items-center gap-3 text-center">
+					<h1 className="text-2xl font-semibold text-white mb-4">Login</h1>
 					<input
 						type="email"
 						placeholder="Email"
 						value={email}
 						onChange={(e) => setEmail(e.target.value)}
-						className='p-1 text-neutral-950'
+						className="p-2 rounded-lg text-gray-800 bg-white w-64"
 					/>
 					<input
 						type="password"
 						placeholder="Password"
 						value={password}
 						onChange={(e) => setPassword(e.target.value)}
-						className='p-1 text-neutral-950'
+						className="p-2 rounded-lg text-gray-800 bg-white w-64"
 					/>
-					<div className='flex flex-row gap-3 w-full'>
-
-						<button className='text-center text-neutral-950 p-1 bg-neutral-300 rounded-sm w-full' onClick={handleLogin}>Login</button>
-						<button className='text-center text-neutral-950 p-1 bg-neutral-300 rounded-sm w-full' onClick={handleLogin}>Signup</button>
+					<div className="flex flex-row gap-3 w-full">
+						<button
+							className="px-4 py-2 text-white bg-green-600 rounded-lg shadow-md hover:bg-green-700 w-full"
+							onClick={handleLogin}
+						>
+							Login
+						</button>
+						<button
+							className="px-4 py-2 text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 w-full"
+							onClick={handleSignup}
+						>
+							Signup
+						</button>
 					</div>
-					<button onClick={handleForgotPassword}>Forgot Password?</button>
+					<button
+						onClick={handleForgotPassword}
+						className="text-white hover:underline"
+					>
+						Forgot Password?
+					</button>
 				</div>
 			)}
 			{currentUser && (
-				<div className='w-full px-12 flex flex-col items-center'>
-					<h1 className='text-center'>User Dashboard</h1>
-					<div className='flex flex-row gap-3 w-full max-w-3xl mt-4'>
-						<button className='text-center text-neutral-950 p-1 bg-neutral-300 rounded-sm w-full'
+				<div className="w-full max-w-4xl mx-auto p-8 bg-white rounded-lg shadow-lg mt-4">
+					<div className="flex flex-row gap-3 w-full mx-auto justify-center">
+						<button
+							className="px-4 py-2 text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 w-full"
 							onClick={() => {
 								setShowProjectList(false)
 								setShowProductForm(!showProductForm)
-							}}>New Project</button>
-
-						<button onClick={() => {
-							setShowProductForm(false)
-							setShowProjectList(!showProjectList)
-						}} className='text-center text-neutral-950 p-1 bg-neutral-300 rounded-sm w-full'>Projects</button>
+							}}
+						>
+							New Project
+						</button>
 						<button
-							className='text-center text-neutral-950 p-1 bg-neutral-300 rounded-sm w-full'
+							onClick={() => {
+								setShowProductForm(false)
+								setShowProjectList(!showProjectList)
+							}}
+							className="px-4 py-2 text-white bg-green-600 rounded-lg shadow-md hover:bg-green-700 w-full"
+						>
+							Projects
+						</button>
+						<button
+							className="px-4 py-2 text-white bg-red-600 rounded-lg shadow-md hover:bg-red-700 w-full"
 							onClick={handleLogout}
-						>Logout</button>
-
+						>
+							Logout
+						</button>
 					</div>
-					{showProductForm && !showProjectList && <>
-						<div className='flex flex-col gap-2 mt-4 w-full max-w-3xl'>
+					{showProductForm && !showProjectList && (
+						<div className="flex flex-col gap-2 mt-4">
 							<input
 								type="text"
 								placeholder="Title"
 								value={newProject.title}
-								onChange={(e) => setNewProject({ ...newProject, title: e.target.value })}
-								className='p-1 text-neutral-950 rounded-sm'
+								onChange={(e) =>
+									setNewProject({ ...newProject, title: e.target.value })
+								}
+								className="p-2 rounded-lg text-gray-800 bg-white"
 							/>
 							<input
 								type="text"
 								placeholder="Description"
 								value={newProject.description}
-								onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
-								className='p-1 text-neutral-950 rounded-sm'
+								onChange={(e) =>
+									setNewProject({ ...newProject, description: e.target.value })
+								}
+								className="p-2 rounded-lg text-gray-800 bg-white"
 							/>
 							<input
 								type="number"
 								placeholder="Hourly Rate"
 								value={newProject.hourlyRate}
-								onChange={(e) => setNewProject({ ...newProject, hourlyRate: e.target.value })}
-								className='p-1 text-neutral-950 rounded-sm'
+								onChange={(e) =>
+									setNewProject({ ...newProject, hourlyRate: e.target.value })
+								}
+								className="p-2 rounded-lg text-gray-800 bg-white"
 							/>
 							<button
-								className='text-center text-neutral-950 p-1 bg-neutral-300 rounded-sm w-1/2 self-center mt-2'
-								onClick={handleAddProject}>Add Project</button>
+								className="px-4 py-2 text-white bg-green-600 rounded-lg shadow-md hover:bg-green-700 self-center w-1/2"
+								onClick={handleAddProject}
+							>
+								Add Project
+							</button>
 						</div>
-					</>
-					}
-					{showProjectList && !showProductForm &&
-
-						<ul className='space-y-3 mt-4 w-full max-w-3xl'>
-							{projects.map((project, index) => (
-								<li key={project.id} className='w-full pb-4 border-b border-neutral-300'>
-									<div className='flex flex-row w-full justify-between gap-0 sm:gap-10'>
-										<p className='w-full'><strong>{index + 1}.&nbsp;&nbsp;{project.title}</strong></p>
-
-										<p className='w-full'>{project.description}</p>
-										<p className='w-full'>${project.hourlyRate}</p>
-										<Link className='p-1 bg-neutral-300 text-neutral-950 rounded-sm' href={`/project/${project.id}`}>Open</Link>
-									</div>
-								</li>
-							))}
-						</ul>
-					}
+					)}
+					{showProjectList && !showProductForm && (
+						<div className="mt-4">
+							<h3 className="text-xl mt-4 text-center text-gray-800 font-bold">
+								Current Projects:
+							</h3>
+							<ul className="space-y-3 mt-4">
+								{projects.map((project, index) => (
+									<li
+										key={project.id}
+										className="pb-4 border-b border-neutral-300"
+									>
+										<div className="flex flex-row justify-between gap-10">
+											<p className="text-xl text-gray-800 w-full">
+												<strong>
+													{index + 1}.&nbsp;&nbsp;{project.title}
+												</strong>
+											</p>
+											<p className="text-gray-800 w-full">{project.description}</p>
+											<p className="text-gray-800 w-full">${project.hourlyRate}</p>
+											<button
+												className="px-4 py-2 text-white bg-green-600 rounded-lg shadow-md hover:bg-green-700"
+												onClick={() => handleMarkAsComplete(project.id)}
+											>
+												Complete
+											</button>
+											<Link
+												className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+												href={`/project/${project.id}`}
+											>
+												Open
+											</Link>
+										</div>
+									</li>
+								))}
+							</ul>
+							<h3 className="text-xl mt-8 text-center text-gray-800 font-bold">
+								Completed Projects:
+							</h3>
+							<ul className="space-y-3 mt-4">
+								{completedProjects.map((project, index) => (
+									<li
+										key={project.id}
+										className="pb-4 border-b border-neutral-300"
+									>
+										<div className="flex flex-row justify-between gap-10">
+											<p className="text-xl text-gray-800 w-full">
+												<strong>
+													{index + 1}.&nbsp;&nbsp;{project.title}
+												</strong>
+											</p>
+											<p className="text-gray-800 w-full">{project.description}</p>
+											<p className="text-gray-800 w-full">${project.hourlyRate}</p>
+											<button
+												className="px-4 py-2 text-white bg-green-600 rounded-lg shadow-md hover:bg-green-700"
+												onClick={() => handleRemove(project.id)}
+											>
+												Remove
+											</button>
+											<Link
+												className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+												href={`/project/${project.id}`}
+											>
+												Open
+											</Link>
+										</div>
+									</li>
+								))}
+							</ul>
+						</div>
+					)}
 				</div>
 			)}
 		</div>

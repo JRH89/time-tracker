@@ -115,42 +115,87 @@ const ProjectDetails = () => {
 	}
 
 	return (
-		<div className="relative">
-			{isLoading ? (
-				<p>Loading project details...</p>
-			) : project ? (
-				<div className="mx-auto flex flex-col items-center my-auto">
-					<button
-						className="absolute top-0 right-0 mt-2 mr-2 bg-red-500 text-white rounded-full px-2 py-1 hover:bg-red-600"
-						onClick={() => {
-							router.push("/")
-						}}
-					>
-						X
-					</button>
-					<div className='my-auto mx-auto flex flex-col gap-2 justify-center h-screen w-auto'>
-						<h2 className='underline text-xl text-center'>Project Details</h2>
-
-						<p><b>Title:</b> {project.title}</p>
-						<p><b>Description:</b> {project.description}</p>
-						<p><b>Hourly Rate:</b> <span className='text-yellow-500'>${project.hourlyRate}</span></p>
-						<p><b>Total Time:</b> <span className='text-green-400'>{formatTime(totalHours, totalMinutes, totalSeconds)}</span></p>
-						<p><b>Cost:</b> <span className='text-yellow-500'>${(project.hourlyRate * (totalHours + totalMinutes / 60 + totalSeconds / 3600)).toFixed(2)}</span></p>
-						<div className='mt-4 flex flex-col'>
+		<div className="bg-gradient-to-b from-blue-400 to-purple-600 min-h-screen flex  justify-center items-center">
+			<div className="max-w-4xl p-8 bg-white rounded-lg shadow-lg">
+				{isLoading ? (
+					<p className="text-center text-gray-800 text-xl font-semibold">
+						Loading project details...
+					</p>
+				) : project ? (
+					<div className="mx-auto flex flex-col items-center ">
+						<button
+							className="absolute top-0 right-0 mt-2 mr-2 bg-red-500 text-white rounded-full px-3 py-1 hover:bg-red-600"
+							onClick={() => {
+								router.push('/')
+							}}
+						>
+							X
+						</button>
+						<div className="w-full mx-auto mb-4 md:mb-0">
+							<h2 className="text-2xl font-semibold text-center mb-4 text-blue-700">
+								Project Details
+							</h2>
+							<p className="mb-2 text-xl text-gray-800">
+								<b>Title:</b> {project.title}
+							</p>
+							<p className="mb-2 text-xl text-gray-800">
+								<b>Desc:</b> {project.description}
+							</p>
+							<p className="mb-2 text-xl text-gray-800">
+								<b>Hourly Rate:</b>{' '}
+								<span className="text-yellow-600">${project.hourlyRate}</span>
+							</p>
+							<p className="mb-2 text-xl text-gray-800">
+								<b>Total Time:</b>{' '}
+								<span className="text-green-600">
+									{formatTime(totalHours, totalMinutes, totalSeconds)}
+								</span>
+							</p>
+							<p className="mb-2 text-xl text-gray-800">
+								<b>Cost:</b>{' '}
+								<span className="text-yellow-600">
+									$
+									{(
+										project.hourlyRate *
+										(totalHours + totalMinutes / 60 + totalSeconds / 3600)
+									).toFixed(2)}
+								</span>
+							</p>
+						</div>
+						<div className="mt-4 flex flex-col items-center">
 							{isTimerRunning ? (
-								<button className="mx-auto p-1 bg-neutral-300 text-neutral-950 rounded-sm" onClick={handleStopTimer}>Stop Timer</button>
+								<button
+									className="px-4 py-2 text-white bg-red-600 rounded-lg shadow-md hover:bg-red-700"
+									onClick={handleStopTimer}
+								>
+									Stop Timer
+								</button>
 							) : (
-								<button className="mx-auto p-1 bg-neutral-300 text-neutral-950 rounded-sm" onClick={handleStartTimer}>Start Timer</button>
+								<button
+									className="px-4 py-2 text-white bg-green-600 rounded-lg shadow-md hover:bg-green-700"
+									onClick={handleStartTimer}
+								>
+									Start Timer
+								</button>
 							)}
-							<p className='mt-4'><b>Session Time:</b> <span className='text-green-400'>{formatTime(sessionHours, sessionMinutes, sessionSeconds)}</span></p>
+							<p className="mt-4 text-gray-800 text-xl">
+								<b>Session Time:</b>{' '}
+								<span className="text-green-600">
+									{formatTime(sessionHours, sessionMinutes, sessionSeconds)}
+								</span>
+							</p>
 						</div>
 					</div>
-				</div>
-			) : (
-				<p>Project not found</p>
-			)}
+				) : (
+					<p className="text-center text-red-600 text-xl font-semibold">
+						Project not found
+					</p>
+				)}
+			</div>
 		</div>
 	)
+
+
 }
 
 export default ProjectDetails

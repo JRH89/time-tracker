@@ -6,7 +6,8 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
   title: 'Time Tracker',
-  description: 'A tool for allowing freelances to track how much time they have spent working on a project, client expense tracker.',
+  description: 'A tool for allowing freelancers to track how much time they have spent working on a project, client expense tracker.',
+  favicon: "/favicon.ico",
 }
 
 export default function RootLayout({ children }) {
