@@ -7,6 +7,8 @@ import { auth, db } from '../../../firebase'
 import { doc, deleteDoc, collection, query, addDoc, onSnapshot, updateDoc } from 'firebase/firestore'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { deleteUser } from 'firebase/auth'
+
 
 const UserDashboard = () => {
 	const { currentUser } = useAuth()
@@ -19,7 +21,7 @@ const UserDashboard = () => {
 	const [showProductForm, setShowProductForm] = useState(false)
 	const [showProjectList, setShowProjectList] = useState(true)
 	const [errorMessage, setErrorMessage] = useState('')
-
+	const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 	useEffect(() => {
 		if (currentUser) {
 			// Firestore reference to the user's projects collection
@@ -82,6 +84,29 @@ const UserDashboard = () => {
 		}
 	}
 
+	const handleDeleteAccount = async () => {
+		// Display a confirmation dialog to the user
+		const shouldDelete = window.confirm(
+			'Are you sure you want to delete your account? This action cannot be undone.'
+		)
+
+		if (shouldDelete) {
+			try {
+				if (currentUser) {
+					// Delete the user's account
+					await deleteUser(auth.currentUser)
+
+					// Redirect the user to the login page or any other appropriate action
+					router.push('/') // Replace '/login' with your desired redirection URL
+				}
+			} catch (error) {
+				console.error('Error deleting account:', error.message)
+			}
+		}
+	}
+
+
+
 	const handleMarkAsComplete = async (projectId) => {
 		try {
 			// Find the project to mark as complete
@@ -126,8 +151,40 @@ const UserDashboard = () => {
 		}
 	}
 
+	const openDropdown = () => {
+		setIsDropdownOpen(!isDropdownOpen)
+	}
+
 	return (
-		<div className="bg-stone-300 min-h-screen flex justify-center items-center p-2">
+		<div className="bg-stone-300 min-h-screen flex flex-col justify-center gap-5 sm:gap-10 items-center p-2">
+			{currentUser &&
+				<div className="flex flex-row gap-3 w-full mx-auto justify-center">
+					<button
+						className="sm:px-4 sm:py-2 p-1 text-white bg-blue-400 rounded-lg shadow-md hover:bg-blue-600 w-full"
+						onClick={() => {
+							setShowProjectList(false)
+							setShowProductForm(true)
+						}}
+					>
+						New Project
+					</button>
+					<button
+						onClick={() => {
+							setShowProductForm(false)
+							setShowProjectList(true)
+						}}
+						className="sm:px-4 sm:py-2 p-1 text-white bg-green-400 rounded-lg shadow-md hover:bg-green-600 w-full"
+					>
+						Projects
+					</button>
+					<button
+						className="sm:px-4 sm:py-2 p-1 text-white bg-red-400 rounded-lg shadow-md hover:bg-red-600 w-full"
+						onClick={handleLogout}
+					>
+						Logout
+					</button>
+				</div>
+			}
 			{!currentUser && (
 				<div className="flex flex-col items-center gap-3 text-center">
 					<h1 className="text-2xl font-semibold mb-4 text-gray-800">Login</h1>
@@ -175,34 +232,25 @@ const UserDashboard = () => {
 			)}
 			{currentUser && (
 				<div className="w-full max-w-4xl mx-auto p-8 bg-white rounded-lg shadow-lg mt-4">
-					<div className="flex flex-row gap-3 w-full mx-auto justify-center">
-						<button
-							className="sm:px-4 sm:py-2 p-1 text-white bg-blue-400 rounded-lg shadow-md hover:bg-blue-600 w-full"
-							onClick={() => {
-								setShowProjectList(false)
-								setShowProductForm(!showProductForm)
-							}}
-						>
-							New Project
-						</button>
-						<button
-							onClick={() => {
-								setShowProductForm(false)
-								setShowProjectList(!showProjectList)
-							}}
-							className="sm:px-4 sm:py-2 p-1 text-white bg-green-400 rounded-lg shadow-md hover:bg-green-600 w-full"
-						>
-							Projects
-						</button>
-						<button
-							className="sm:px-4 sm:py-2 p-1 text-white bg-red-400 rounded-lg shadow-md hover:bg-red-600 w-full"
-							onClick={handleLogout}
-						>
-							Logout
-						</button>
+					<div className="">
+						<div className="flex justify-center items-center absolute top-4 left-0 right-0">
+							<button onClick={openDropdown} className="rounded-full px-2 font-bold hover:scale-95 duration-200">
+								<i className="fa-solid fa-bars text-transparent bg-gradient-to-b from-blue-600 via-green-600 to-red-500 bg-clip-text text-2xl" />
+							</button>
+						</div>
+						{isDropdownOpen && (
+							<div className='p-4 bg-white absolute top-12 left-1/2 transform -translate-x-1/2 rounded-lg shadow-lg'>
+								<button
+									onClick={handleDeleteAccount}
+									className='bg-red-400 p-1 rounded-md'
+								>
+									Delete Account
+								</button>
+							</div>
+						)}
 					</div>
 					{showProductForm && !showProjectList && (
-						<div className="flex flex-col gap-2 mt-4">
+						<div className="flex flex-col gap-2">
 							<input
 								type="text"
 								placeholder="Title"
@@ -210,16 +258,16 @@ const UserDashboard = () => {
 								onChange={(e) =>
 									setNewProject({ ...newProject, title: e.target.value })
 								}
-								className="p-2 rounded-lg text-gray-800 bg-white"
+								className="p-2 rounded-lg text-gray-800 bg-white border border-neutral-800"
 							/>
-							<input
-								type="text"
+							<textarea
+								rows={4}
 								placeholder="Description"
 								value={newProject.description}
 								onChange={(e) =>
 									setNewProject({ ...newProject, description: e.target.value })
 								}
-								className="p-2 rounded-lg text-gray-800 bg-white"
+								className="p-2 rounded-lg text-gray-800 bg-white border-neutral-800 border"
 							/>
 							<input
 								type="number"
@@ -228,7 +276,7 @@ const UserDashboard = () => {
 								onChange={(e) =>
 									setNewProject({ ...newProject, hourlyRate: e.target.value })
 								}
-								className="p-2 rounded-lg text-gray-800 bg-white"
+								className="p-2 rounded-lg text-gray-800 bg-white border border-neutral-800"
 							/>
 							<button
 								className="sm:px-4 sm:py-2 p-1 text-white bg-green-400 rounded-lg shadow-md hover:bg-green-600 self-center w-1/2"
@@ -258,7 +306,7 @@ const UserDashboard = () => {
 											<p className="text-gray-800 w-full hidden sm:block">{project.description}</p>
 											<p className="text-gray-800 w-full hidden sm:block">${project.hourlyRate}</p>
 											<button
-												className="sm:px-4 sm:py-2 p-1 text-white bg-green-400 rounded-lg shadow-md hover:bg-green-600 text-sm sm:text-base my-auto"
+												className="sm:px-2 sm:py-2 p-1 text-white bg-green-400 rounded-lg shadow-md hover:bg-green-600 text-sm sm:text-base my-auto"
 												onClick={() => handleMarkAsComplete(project.id)}
 											>
 												Complete
