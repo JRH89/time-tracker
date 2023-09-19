@@ -283,21 +283,21 @@ const UserDashboard = () => {
 										className="pb-4 border-b border-neutral-300"
 									>
 										<div className="flex flex-row justify-between gap-10">
-											<p className="text-xl text-gray-800 w-full">
+											<p className="text-lg text-gray-800 w-full">
 												<strong>
 													{index + 1}.&nbsp;&nbsp;{project.title}
 												</strong>
 											</p>
-											<p className="text-gray-800 w-full">{project.description}</p>
-											<p className="text-gray-800 w-full">${project.hourlyRate}</p>
+											<p className="text-gray-800 w-full hidden sm:block">{project.description}</p>
+											<p className="text-gray-800 w-full hidden sm:block">${project.hourlyRate}</p>
 											<button
-												className="px-4 py-2 text-white bg-green-400 my-auto rounded-lg shadow-md hover:bg-green-600"
+												className="sm:px-4 sm:py-2 p-1  text-white bg-green-400 my-auto rounded-lg shadow-md hover:bg-green-600"
 												onClick={() => handleRemove(project.id)}
 											>
 												Remove
 											</button>
 											<Link
-												className="px-4 py-2 bg-blue-400 text-white align-middle my-auto rounded-lg hover:bg-blue-600"
+												className="sm:px-4 sm:py-2 p-1 bg-blue-400 text-white align-middle my-auto rounded-lg hover:bg-blue-600"
 												href={`/project/${project.id}`}
 											>
 												Open
