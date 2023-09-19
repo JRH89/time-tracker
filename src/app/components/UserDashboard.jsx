@@ -10,12 +10,12 @@ import Link from 'next/link'
 
 const UserDashboard = () => {
 	const { currentUser } = useAuth()
+	const router = useRouter()
 	const [projects, setProjects] = useState([])
 	const [completedProjects, setCompletedProjects] = useState([])
 	const [newProject, setNewProject] = useState({ title: '', description: '', hourlyRate: 0 })
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
-	const router = useRouter()
 	const [showProductForm, setShowProductForm] = useState(false)
 	const [showProjectList, setShowProjectList] = useState(true)
 	const [errorMessage, setErrorMessage] = useState('')
@@ -118,11 +118,19 @@ const UserDashboard = () => {
 		}
 	}
 
+	const handleGuestSignIn = async () => {
+		try {
+			await signInWithEmailAndPassword(auth, "guest@guest.com", "Guest123!")
+		} catch (error) {
+			setErrorMessage(error.message)
+		}
+	}
+
 	return (
-		<div className="bg-gradient-to-b from-blue-400 to-purple-600 min-h-screen flex justify-center items-center p-2">
+		<div className="bg-stone-300 min-h-screen flex justify-center items-center p-2">
 			{!currentUser && (
 				<div className="flex flex-col items-center gap-3 text-center">
-					<h1 className="text-2xl font-semibold text-white mb-4">Login</h1>
+					<h1 className="text-2xl font-semibold mb-4 text-gray-800">Login</h1>
 					<input
 						type="email"
 						placeholder="Email"
@@ -139,21 +147,27 @@ const UserDashboard = () => {
 					/>
 					<div className="flex flex-row gap-3 w-full">
 						<button
-							className="px-4 py-2 text-white bg-green-600 rounded-lg shadow-md hover:bg-green-700 w-full"
+							className="px-4 py-2 text-white bg-green-400 rounded-lg shadow-md hover:bg-green-600 w-full"
 							onClick={handleLogin}
 						>
 							Login
 						</button>
 						<button
-							className="px-4 py-2 text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 w-full"
+							className="px-4 py-2 text-white bg-blue-400 rounded-lg shadow-md hover:bg-blue-600 w-full"
 							onClick={handleSignup}
 						>
 							Signup
 						</button>
 					</div>
 					<button
+						onClick={handleGuestSignIn}
+						className="px-4 py-2 text-white bg-red-400 rounded-lg shadow-md hover:bg-red-600 w-full"
+					>
+						Guest
+					</button>
+					<button
 						onClick={handleForgotPassword}
-						className="text-white hover:underline"
+						className="text-gray-800 hover:underline"
 					>
 						Forgot Password?
 					</button>
@@ -163,7 +177,7 @@ const UserDashboard = () => {
 				<div className="w-full max-w-4xl mx-auto p-8 bg-white rounded-lg shadow-lg mt-4">
 					<div className="flex flex-row gap-3 w-full mx-auto justify-center">
 						<button
-							className="px-4 py-2 text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 w-full"
+							className="sm:px-4 sm:py-2 p-1 text-white bg-blue-400 rounded-lg shadow-md hover:bg-blue-600 w-full"
 							onClick={() => {
 								setShowProjectList(false)
 								setShowProductForm(!showProductForm)
@@ -176,12 +190,12 @@ const UserDashboard = () => {
 								setShowProductForm(false)
 								setShowProjectList(!showProjectList)
 							}}
-							className="px-4 py-2 text-white bg-green-600 rounded-lg shadow-md hover:bg-green-700 w-full"
+							className="sm:px-4 sm:py-2 p-1 text-white bg-green-400 rounded-lg shadow-md hover:bg-green-600 w-full"
 						>
 							Projects
 						</button>
 						<button
-							className="px-4 py-2 text-white bg-red-600 rounded-lg shadow-md hover:bg-red-700 w-full"
+							className="sm:px-4 sm:py-2 p-1 text-white bg-red-400 rounded-lg shadow-md hover:bg-red-600 w-full"
 							onClick={handleLogout}
 						>
 							Logout
@@ -217,7 +231,7 @@ const UserDashboard = () => {
 								className="p-2 rounded-lg text-gray-800 bg-white"
 							/>
 							<button
-								className="px-4 py-2 text-white bg-green-600 rounded-lg shadow-md hover:bg-green-700 self-center w-1/2"
+								className="sm:px-4 sm:py-2 p-1 text-white bg-green-400 rounded-lg shadow-md hover:bg-green-600 self-center w-1/2"
 								onClick={handleAddProject}
 							>
 								Add Project
@@ -229,28 +243,28 @@ const UserDashboard = () => {
 							<h3 className="text-xl mt-4 text-center text-gray-800 font-bold">
 								Current Projects:
 							</h3>
-							<ul className="space-y-3 mt-4">
+							<ul className="space-y-3 mt-4 flex-wrap">
 								{projects.map((project, index) => (
 									<li
 										key={project.id}
-										className="pb-4 border-b border-neutral-300"
+										className="pb-4 border-b border-neutral-300 flex flex-wrap"
 									>
-										<div className="flex flex-row justify-between gap-10">
-											<p className="text-xl text-gray-800 w-full">
+										<div className="flex flex-row justify-between gap-3 sm:gap-10 w-full">
+											<p className="text-lg text-gray-800 w-full">
 												<strong>
 													{index + 1}.&nbsp;&nbsp;{project.title}
 												</strong>
 											</p>
-											<p className="text-gray-800 w-full">{project.description}</p>
-											<p className="text-gray-800 w-full">${project.hourlyRate}</p>
+											<p className="text-gray-800 w-full hidden sm:block">{project.description}</p>
+											<p className="text-gray-800 w-full hidden sm:block">${project.hourlyRate}</p>
 											<button
-												className="px-4 py-2 text-white bg-green-600 rounded-lg shadow-md hover:bg-green-700"
+												className="sm:px-4 sm:py-2 p-1 text-white bg-green-400 rounded-lg shadow-md hover:bg-green-600 text-sm sm:text-base my-auto"
 												onClick={() => handleMarkAsComplete(project.id)}
 											>
 												Complete
 											</button>
 											<Link
-												className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+												className="sm:px-4 sm:py-2 p-1 bg-blue-400 text-white rounded-lg hover:bg-blue-600 my-auto"
 												href={`/project/${project.id}`}
 											>
 												Open
@@ -277,13 +291,13 @@ const UserDashboard = () => {
 											<p className="text-gray-800 w-full">{project.description}</p>
 											<p className="text-gray-800 w-full">${project.hourlyRate}</p>
 											<button
-												className="px-4 py-2 text-white bg-green-600 rounded-lg shadow-md hover:bg-green-700"
+												className="px-4 py-2 text-white bg-green-400 my-auto rounded-lg shadow-md hover:bg-green-600"
 												onClick={() => handleRemove(project.id)}
 											>
 												Remove
 											</button>
 											<Link
-												className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+												className="px-4 py-2 bg-blue-400 text-white align-middle my-auto rounded-lg hover:bg-blue-600"
 												href={`/project/${project.id}`}
 											>
 												Open

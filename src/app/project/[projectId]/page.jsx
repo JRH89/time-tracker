@@ -115,7 +115,7 @@ const ProjectDetails = () => {
 	}
 
 	return (
-		<div className="bg-gradient-to-b from-blue-400 to-purple-600 min-h-screen flex  justify-center items-center">
+		<div className="bg-stone-300 min-h-screen flex  justify-center items-center">
 			<div className="max-w-4xl p-8 bg-white rounded-lg shadow-lg">
 				{isLoading ? (
 					<p className="text-center text-gray-800 text-xl font-semibold">
@@ -124,7 +124,7 @@ const ProjectDetails = () => {
 				) : project ? (
 					<div className="mx-auto flex flex-col items-center ">
 						<button
-							className="absolute top-0 right-0 mt-2 mr-2 bg-red-500 text-white rounded-full px-3 py-1 hover:bg-red-600"
+							className="absolute top-0 right-0 mt-2 mr-2 bg-red-400 text-white rounded-full px-3 py-1 hover:bg-red-600"
 							onClick={() => {
 								router.push('/')
 							}}
@@ -132,7 +132,7 @@ const ProjectDetails = () => {
 							X
 						</button>
 						<div className="w-full mx-auto mb-4 md:mb-0">
-							<h2 className="text-2xl font-semibold text-center mb-4 text-blue-700">
+							<h2 className="text-2xl font-semibold text-center mb-4 text-blue-400">
 								Project Details
 							</h2>
 							<p className="mb-2 text-xl text-gray-800">
@@ -165,14 +165,14 @@ const ProjectDetails = () => {
 						<div className="mt-4 flex flex-col items-center">
 							{isTimerRunning ? (
 								<button
-									className="px-4 py-2 text-white bg-red-600 rounded-lg shadow-md hover:bg-red-700"
+									className="px-4 py-2 text-white bg-red-400 rounded-lg shadow-md hover:bg-red-600"
 									onClick={handleStopTimer}
 								>
 									Stop Timer
 								</button>
 							) : (
 								<button
-									className="px-4 py-2 text-white bg-green-600 rounded-lg shadow-md hover:bg-green-700"
+									className="px-4 py-2 text-white bg-green-400 rounded-lg shadow-md hover:bg-green-600"
 									onClick={handleStartTimer}
 								>
 									Start Timer

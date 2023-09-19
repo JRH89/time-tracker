@@ -10,9 +10,15 @@ export const metadata = {
   favicon: "/favicon.ico",
 }
 
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+      <head>
+        <meta property="og:title" content="${metadata.title}" />
+        <meta property="og:description" content="${metadata.description}" />
+        <meta property="og:image" content="https://time-tracker-plus.vercel.app/preview.png" />
+      </head>
       <body className={inter.className}>
         <AuthProvider>
           {children}
