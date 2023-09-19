@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '@/context/AuthProvider'
 import { signOut } from 'firebase/auth'
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth'
 import { auth, db } from '../../../firebase'
 import { doc, deleteDoc, collection, query, addDoc, onSnapshot, updateDoc } from 'firebase/firestore'
 import { useRouter } from 'next/navigation'
@@ -75,7 +75,7 @@ const UserDashboard = () => {
 
 	const handleForgotPassword = async () => {
 		try {
-			await auth.sendPasswordResetEmail(email)
+			await sendPasswordResetEmail(auth, email)
 			alert('Password reset email sent. Check your inbox.')
 		} catch (error) {
 			console.error('Password reset email failed:', error.message)
