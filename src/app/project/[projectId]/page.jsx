@@ -87,6 +87,8 @@ const ProjectDetails = () => {
 		setSessionTimer(sessionTimerInterval)
 	}
 
+
+
 	const handleStopTimer = async () => {
 		setIsTimerRunning(false)
 		clearInterval(sessionTimer)
@@ -157,7 +159,7 @@ const ProjectDetails = () => {
 									$
 									{(
 										project.hourlyRate *
-										(totalHours + totalMinutes / 60 + totalSeconds / 3600)
+										((totalHours + totalMinutes / 60 + totalSeconds / 3600) / 10)
 									).toFixed(2)}
 								</span>
 							</p>
