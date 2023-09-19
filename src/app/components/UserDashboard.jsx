@@ -158,7 +158,7 @@ const UserDashboard = () => {
 	return (
 		<div className="bg-stone-300 min-h-screen flex flex-col justify-center gap-5 sm:gap-10 items-center p-2">
 			{currentUser &&
-				<div className="flex flex-row gap-3 w-full mx-auto justify-center">
+				<div className="flex flex-row gap-3 w-full max-w-4xl mx-auto justify-center">
 					<button
 						className="sm:px-4 sm:py-2 p-1 text-white bg-blue-400 rounded-lg shadow-md hover:bg-blue-600 w-full"
 						onClick={() => {
