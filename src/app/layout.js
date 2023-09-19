@@ -10,7 +10,6 @@ export const metadata = {
   favicon: "/favicon.ico",
 }
 
-
 export default function RootLayout({ children }) {
   return (
     <html lang="en">

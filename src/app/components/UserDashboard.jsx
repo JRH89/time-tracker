@@ -9,10 +9,11 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { deleteUser } from 'firebase/auth'
 
-
 const UserDashboard = () => {
+
 	const { currentUser } = useAuth()
 	const router = useRouter()
+
 	const [projects, setProjects] = useState([])
 	const [completedProjects, setCompletedProjects] = useState([])
 	const [newProject, setNewProject] = useState({ title: '', description: '', hourlyRate: 0 })
@@ -22,6 +23,7 @@ const UserDashboard = () => {
 	const [showProjectList, setShowProjectList] = useState(true)
 	const [errorMessage, setErrorMessage] = useState('')
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+
 	useEffect(() => {
 		if (currentUser) {
 			// Firestore reference to the user's projects collection
@@ -104,8 +106,6 @@ const UserDashboard = () => {
 			}
 		}
 	}
-
-
 
 	const handleMarkAsComplete = async (projectId) => {
 		try {

@@ -26,7 +26,6 @@ const ProjectDetails = () => {
 	const [sessionTimer, setSessionTimer] = useState(0)
 	const [isTimerRunning, setIsTimerRunning] = useState(false)
 	const [isLoading, setIsLoading] = useState(true)
-	const [isDropdownOpen, setOpenDropdown] = useState(false)
 
 	useEffect(() => {
 		// Extract projectId when the component mounts
@@ -66,10 +65,6 @@ const ProjectDetails = () => {
 			fetchProjectDetails()
 		}
 	}, [currentUser, projectId])
-
-	const openDropdown = () => {
-		setOpenDropdown(!isDropdownOpen)
-	}
 
 	const handleStartTimer = () => {
 		setIsTimerRunning(true)
@@ -202,8 +197,8 @@ const ProjectDetails = () => {
 					)}
 				</div>
 			</div>
-
-			<Footer /></>
+			<Footer />
+		</>
 	)
 
 
