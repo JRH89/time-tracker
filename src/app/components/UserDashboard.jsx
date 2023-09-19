@@ -177,12 +177,7 @@ const UserDashboard = () => {
 					>
 						Projects
 					</button>
-					<button
-						className="sm:px-4 sm:py-2 p-1 text-white bg-red-400 rounded-lg shadow-md hover:bg-red-600 w-full"
-						onClick={handleLogout}
-					>
-						Logout
-					</button>
+
 				</div>
 			}
 			{!currentUser && (
@@ -240,12 +235,20 @@ const UserDashboard = () => {
 						</div>
 						{isDropdownOpen && (
 							<div className='p-4 bg-white absolute top-12 left-1/2 transform -translate-x-1/2 rounded-lg shadow-lg'>
-								<button
-									onClick={handleDeleteAccount}
-									className='bg-red-400 p-1 rounded-md'
-								>
-									Delete Account
-								</button>
+								<div className='flex flex-col gap-3'>
+									<button
+										className='bg-green-400 p-1 rounded-md hover:bg-green-600'
+										onClick={handleLogout}
+									>
+										Logout
+									</button>
+									<button
+										onClick={handleDeleteAccount}
+										className='bg-red-400 hover:bg-red-600 p-1 rounded-md'
+									>
+										Delete Account
+									</button>
+								</div>
 							</div>
 						)}
 					</div>
