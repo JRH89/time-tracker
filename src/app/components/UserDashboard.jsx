@@ -264,7 +264,7 @@ const UserDashboard = () => {
 												Complete
 											</button>
 											<Link
-												className="sm:px-4 sm:py-2 p-1 bg-blue-400 text-white rounded-lg hover:bg-blue-600 my-auto"
+												className="sm:px-4 sm:py-2 p-1 bg-blue-400 text-white rounded-lg text-sm sm:text-base hover:bg-blue-600 my-auto"
 												href={`/project/${project.id}`}
 											>
 												Open
@@ -282,7 +282,7 @@ const UserDashboard = () => {
 										key={project.id}
 										className="pb-4 border-b border-neutral-300"
 									>
-										<div className="flex flex-row justify-between gap-10">
+										<div className="flex flex-row justify-between gap-3 sm:gap-10 w-full">
 											<p className="text-lg text-gray-800 w-full">
 												<strong>
 													{index + 1}.&nbsp;&nbsp;{project.title}
@@ -291,13 +291,13 @@ const UserDashboard = () => {
 											<p className="text-gray-800 w-full hidden sm:block">{project.description}</p>
 											<p className="text-gray-800 w-full hidden sm:block">${project.hourlyRate}</p>
 											<button
-												className="sm:px-4 sm:py-2 p-1  text-white bg-green-400 my-auto rounded-lg shadow-md hover:bg-green-600"
+												className="sm:px-4 sm:py-2 p-1  text-white bg-green-400 my-auto rounded-lg shadow-md hover:bg-green-600 text-sm sm:text-base"
 												onClick={() => handleRemove(project.id)}
 											>
 												Remove
 											</button>
 											<Link
-												className="sm:px-4 sm:py-2 p-1 bg-blue-400 text-white align-middle my-auto rounded-lg hover:bg-blue-600"
+												className="sm:px-4 sm:py-2 p-1 bg-blue-400 text-white align-middle my-auto rounded-lg hover:bg-blue-600 text-sm sm:text-base"
 												href={`/project/${project.id}`}
 											>
 												Open
