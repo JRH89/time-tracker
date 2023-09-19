@@ -342,7 +342,7 @@ const UserDashboard = () => {
 											<p className="text-gray-800 w-full hidden sm:block">{project.description}</p>
 											<p className="text-gray-800 w-full hidden sm:block">${project.hourlyRate}</p>
 											<button
-												className="sm:px-4 sm:py-2 p-1  text-white bg-green-400 my-auto rounded-lg shadow-md hover:bg-green-600 text-sm sm:text-base"
+												className="sm:px-4 sm:py-2 p-1 px-2  text-white bg-green-400 my-auto rounded-lg shadow-md hover:bg-green-600 text-sm sm:text-base"
 												onClick={() => handleRemove(project.id)}
 											>
 												Remove
