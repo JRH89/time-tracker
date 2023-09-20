@@ -119,16 +119,16 @@ const ProjectDetails = () => {
 
 	return (
 		<>
-			<div className="bg-stone-300 min-h-screen flex  justify-center items-center">
-				<div className="max-w-4xl p-8 bg-white rounded-lg shadow-lg">
+			<div className="bg-stone-300 min-h-screen flex  justify-center items-center px-2">
+				<div className="max-w-4xl p-8 bg-white shadow-black rounded-lg shadow-lg">
 					{isLoading ? (
 						<p className="text-center text-gray-800 text-xl font-semibold">
 							Loading project details...
 						</p>
 					) : project ? (
-						<div className="mx-auto flex flex-col items-center ">
+						<div className="mx-auto flex flex-col items-center">
 							<button
-								className="absolute top-1 right-1 mt-2 mr-2 bg-red-400 text-white rounded-full px-3 py-1 hover:bg-red-600"
+								className="fixed top-1 right-1 mt-2 mr-2 bg-red-400 text-gray-800 rounded-lg px-2 font-bold hover:bg-red-600"
 								onClick={() => {
 									router.push('/')
 								}}
@@ -136,26 +136,26 @@ const ProjectDetails = () => {
 								X
 							</button>
 							<div className="w-full mx-auto mb-4 md:mb-0">
-								<h2 className="text-2xl font-semibold text-center mb-4 text-blue-400">
+								<h2 className="text-2xl font-semibold text-center mb-4 text-gray-800">
 									Project Details
 								</h2>
-								<p className="mb-2 text-xl text-gray-800">
+								<p className="mb-2 text-base sm:text-xl text-gray-800">
 									<b>Title:</b> {project.title}
 								</p>
-								<p className="mb-2 text-xl text-gray-800">
+								<p className="mb-2 text-base sm:text-xl text-gray-800">
 									<b>Desc:</b> {project.description}
 								</p>
-								<p className="mb-2 text-xl text-gray-800">
-									<b>Hourly Rate:</b>{' '}
+								<p className="mb-2 text-base sm:text-xl text-gray-800">
+									<b>Hourly:</b>{' '}
 									<span className="text-yellow-600">${project.hourlyRate}</span>
 								</p>
-								<p className="mb-2 text-xl text-gray-800">
-									<b>Total Time:</b>{' '}
+								<p className="mb-2 text-base sm:text-xl text-gray-800">
+									<b>Time:</b>{' '}
 									<span className="text-green-600">
 										{formatTime(totalHours, totalMinutes, totalSeconds)}
 									</span>
 								</p>
-								<p className="mb-2 text-xl text-gray-800">
+								<p className="mb-2 text-base sm:text-xl text-gray-800">
 									<b>Cost:</b>{' '}
 									<span className="text-yellow-600">
 										$
@@ -169,21 +169,21 @@ const ProjectDetails = () => {
 							<div className="mt-4 flex flex-col items-center">
 								{isTimerRunning ? (
 									<button
-										className="px-4 py-2 text-white bg-red-400 rounded-lg shadow-md hover:bg-red-600"
+										className="px-4 py-2 text-white bg-red-400 rounded-lg shadow-md hover:bg-red-600 font-bold"
 										onClick={handleStopTimer}
 									>
 										Clock Out
 									</button>
 								) : (
 									<button
-										className="px-4 py-2 text-white bg-green-400 rounded-lg shadow-md hover:bg-green-600"
+										className="px-4 py-2 text-white bg-green-400 rounded-lg shadow-md hover:bg-green-600 font-bold"
 										onClick={handleStartTimer}
 									>
 										Clock In
 									</button>
 								)}
-								<p className="mt-4 text-gray-800 text-xl">
-									<b>Session Time:</b>{' '}
+								<p className="mt-8 text-neutral-300 text-xl p-2 bg-gray-800 rounded-lg">
+									<b>Session:</b>{' '}
 									<span className="text-green-600">
 										{formatTime(sessionHours, sessionMinutes, sessionSeconds)}
 									</span>

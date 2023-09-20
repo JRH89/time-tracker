@@ -160,7 +160,7 @@ const UserDashboard = () => {
 			{currentUser &&
 				<div className="flex flex-row gap-3 w-full max-w-4xl mx-auto justify-center">
 					<button
-						className="sm:px-4 sm:py-2 p-1 text-white bg-blue-400 rounded-lg shadow-md hover:bg-blue-600 w-full"
+						className="sm:px-4 sm:py-2 p-1 text-gray-800 bg-blue-400 rounded-lg shadow-md hover:bg-blue-600 w-full font-bold"
 						onClick={() => {
 							setShowProjectList(false)
 							setShowProductForm(true)
@@ -173,7 +173,7 @@ const UserDashboard = () => {
 							setShowProductForm(false)
 							setShowProjectList(true)
 						}}
-						className="sm:px-4 sm:py-2 p-1 text-white bg-green-400 rounded-lg shadow-md hover:bg-green-600 w-full"
+						className="sm:px-4 sm:py-2 p-1 text-gray-800 bg-green-400 rounded-lg shadow-md hover:bg-green-600 w-full font-bold"
 					>
 						Projects
 					</button>
@@ -199,13 +199,13 @@ const UserDashboard = () => {
 					/>
 					<div className="flex flex-row gap-3 w-full">
 						<button
-							className="px-4 py-2 text-white bg-green-400 rounded-lg shadow-md hover:bg-green-600 w-full"
+							className="px-4 py-2 text-gray-800 bg-green-400 rounded-lg shadow-md hover:bg-green-600 w-full"
 							onClick={handleLogin}
 						>
 							Login
 						</button>
 						<button
-							className="px-4 py-2 text-white bg-blue-400 rounded-lg shadow-md hover:bg-blue-600 w-full"
+							className="px-4 py-2 text-gray-800 bg-blue-400 rounded-lg shadow-md hover:bg-blue-600 w-full"
 							onClick={handleSignup}
 						>
 							Signup
@@ -213,7 +213,7 @@ const UserDashboard = () => {
 					</div>
 					<button
 						onClick={handleGuestSignIn}
-						className="px-4 py-2 text-white bg-red-400 rounded-lg shadow-md hover:bg-red-600 w-full"
+						className="px-4 py-2 text-gray-800 bg-red-400 rounded-lg shadow-md hover:bg-red-600 w-full"
 					>
 						Guest
 					</button>
@@ -226,25 +226,26 @@ const UserDashboard = () => {
 				</div>
 			)}
 			{currentUser && (
-				<div className="w-full max-w-4xl mx-auto p-8 bg-white rounded-lg shadow-lg mt-4">
+				<div className="w-full max-w-4xl mx-auto p-8 bg-white shadow-black rounded-lg shadow-lg mt-4">
 					<div className="">
-						<div className="flex justify-center items-center absolute top-4 left-0 right-0">
+						<div className="flex bg-gray-800 justify-between pl-2 pr-2 items-center fixed top-0 py-2 left-0 right-0">
+							<h1 className='font-bold md:text-3xl'>Time Tracker</h1>
 							<button onClick={openDropdown} className="rounded-full px-2 font-bold hover:scale-95 duration-200">
-								<i className="fa-solid fa-bars text-transparent bg-gradient-to-b from-blue-600 via-green-600 to-red-500 bg-clip-text text-2xl" />
+								<i className="fa-solid md:text-3xl fa-bars text-transparent bg-gradient-to-b from-blue-600 via-green-600 to-red-500 bg-clip-text text-2xl" />
 							</button>
 						</div>
 						{isDropdownOpen && (
-							<div className='p-4 bg-white absolute top-12 left-1/2 transform -translate-x-1/2 rounded-lg shadow-lg'>
+							<div className='p-4 bg-gray-800 fixed top-12 md:top-14 right-1 rounded-lg shadow-lg'>
 								<div className='flex flex-col gap-3'>
 									<button
-										className='bg-green-400 p-1 rounded-md hover:bg-green-600'
+										className='bg-green-400 p-1 rounded-md hover:bg-green-600 text-gray-800'
 										onClick={handleLogout}
 									>
 										Logout
 									</button>
 									<button
 										onClick={handleDeleteAccount}
-										className='bg-red-400 hover:bg-red-600 p-1 rounded-md'
+										className='bg-red-400 hover:bg-red-600 p-1 rounded-md text-gray-800'
 									>
 										Delete Account
 									</button>
@@ -282,7 +283,7 @@ const UserDashboard = () => {
 								className="p-2 rounded-lg text-gray-800 bg-white border border-neutral-800"
 							/>
 							<button
-								className="sm:px-4 sm:py-2 p-1 text-white bg-green-400 rounded-lg shadow-md hover:bg-green-600 self-center w-1/2"
+								className="sm:px-4 sm:py-2 p-1 text-gray-800 bg-green-400 rounded-lg shadow-md hover:bg-green-600 self-center w-1/2"
 								onClick={handleAddProject}
 							>
 								Add Project
@@ -309,13 +310,13 @@ const UserDashboard = () => {
 											<p className="text-gray-800 w-full hidden sm:block">{project.description}</p>
 											<p className="text-gray-800 w-full hidden sm:block">${project.hourlyRate}</p>
 											<button
-												className="sm:px-2 sm:py-2 p-1 text-white bg-green-400 rounded-lg shadow-md hover:bg-green-600 text-sm sm:text-base my-auto"
+												className="sm:px-2 sm:py-2 p-1 text-gray-800 bg-green-400 rounded-lg shadow-md hover:bg-green-600 text-sm sm:text-base my-auto"
 												onClick={() => handleMarkAsComplete(project.id)}
 											>
 												Complete
 											</button>
 											<Link
-												className="sm:px-4 sm:py-2 p-1 bg-blue-400 text-white rounded-lg text-sm sm:text-base hover:bg-blue-600 my-auto"
+												className="sm:px-4 sm:py-2 p-1 bg-blue-400 text-gray-800 rounded-lg text-sm sm:text-base hover:bg-blue-600 my-auto"
 												href={`/project/${project.id}`}
 											>
 												Open
@@ -342,13 +343,13 @@ const UserDashboard = () => {
 											<p className="text-gray-800 w-full hidden sm:block">{project.description}</p>
 											<p className="text-gray-800 w-full hidden sm:block">${project.hourlyRate}</p>
 											<button
-												className="sm:px-4 sm:py-2 p-1 px-2  text-white bg-green-400 my-auto rounded-lg shadow-md hover:bg-green-600 text-sm sm:text-base"
+												className="sm:px-4 sm:py-2 p-1 px-2  text-gray-800 bg-green-400 my-auto rounded-lg shadow-md hover:bg-green-600 text-sm sm:text-base"
 												onClick={() => handleRemove(project.id)}
 											>
 												Remove
 											</button>
 											<Link
-												className="sm:px-4 sm:py-2 p-1 bg-blue-400 text-white align-middle my-auto rounded-lg hover:bg-blue-600 text-sm sm:text-base"
+												className="sm:px-4 sm:py-2 p-1 bg-blue-400 text-gray-800 align-middle my-auto rounded-lg hover:bg-blue-600 text-sm sm:text-base"
 												href={`/project/${project.id}`}
 											>
 												Open

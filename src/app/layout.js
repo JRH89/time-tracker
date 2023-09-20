@@ -20,7 +20,7 @@ export default function RootLayout({ children }) {
         <meta property="og:image" content="https://time-tracker-plus.vercel.app/preview.png" />
         <meta property="og:url" content="https://time-tracker-plus.vercel.app" />
       </head>
-      <body className={inter.className}>
+      <body className={inter.className} >
         <AuthProvider>
           {children}
         </AuthProvider>
