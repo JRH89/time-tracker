@@ -128,15 +128,15 @@ const ProjectDetails = () => {
 					) : project ? (
 						<div className="mx-auto flex flex-col items-center">
 							<button
-								className="fixed top-1 right-1 mt-2 mr-2 bg-red-400 text-gray-800 rounded-lg px-2 font-bold hover:bg-red-600"
+								className="fixed top-1 right-1 mt-2 mr-2 bg-red-400 text-gray-800 rounded-lg px-3 py-1 font-bold hover:bg-red-600 text-xl"
 								onClick={() => {
 									router.push('/')
 								}}
 							>
 								X
 							</button>
-							<div className="w-full mx-auto mb-4 md:mb-0">
-								<h2 className="text-2xl font-semibold text-center mb-4 text-gray-800">
+							<div className="w-full mx-auto mb-4">
+								<h2 className="text-2xl font-semibold text-center mb-8 text-gray-800 underline">
 									Project Details
 								</h2>
 								<p className="mb-2 text-base sm:text-xl text-gray-800">
@@ -166,23 +166,23 @@ const ProjectDetails = () => {
 									</span>
 								</p>
 							</div>
-							<div className="mt-4 flex flex-col items-center">
+							<div className="mt-4 flex flex-row items-center gap-3">
 								{isTimerRunning ? (
 									<button
-										className="px-4 py-2 text-white bg-red-400 rounded-lg shadow-md hover:bg-red-600 font-bold"
+										className="px-4 py-2 sm:text-xl text-gray-800 border border-gray-800 bg-red-400 rounded-lg shadow-md hover:bg-red-600 font-bold"
 										onClick={handleStopTimer}
 									>
 										Clock Out
 									</button>
 								) : (
 									<button
-										className="px-4 py-2 text-white bg-green-400 rounded-lg shadow-md hover:bg-green-600 font-bold"
+										className="px-4 py-2 sm:text-xl text-gray-800 bg-green-400 rounded-lg shadow-md hover:bg-green-600 font-bold border border-gray-800"
 										onClick={handleStartTimer}
 									>
 										Clock In
 									</button>
 								)}
-								<p className="mt-8 text-neutral-300 text-xl p-2 bg-gray-800 rounded-lg">
+								<p className="text-neutral-300 sm:text-xl p-2 bg-gray-800 rounded-lg border border-green-400">
 									<b>Session:</b>{' '}
 									<span className="text-green-600">
 										{formatTime(sessionHours, sessionMinutes, sessionSeconds)}
