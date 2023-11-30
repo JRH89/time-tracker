@@ -10,8 +10,9 @@ import { useAuth } from '@/context/AuthProvider'
 import { useRouter } from 'next/navigation'
 import Footer from '@/app/components/Footer'
 
-const ProjectDetails = () => {
+// ... (Previous imports remain the same)
 
+const ProjectDetails = () => {
 	const { currentUser } = useAuth()
 	const router = useRouter()
 
@@ -26,48 +27,62 @@ const ProjectDetails = () => {
 	const [sessionTimer, setSessionTimer] = useState(0)
 	const [isTimerRunning, setIsTimerRunning] = useState(false)
 	const [isLoading, setIsLoading] = useState(true)
+	const [timesheet, setTimesheet] = useState([])
 
 	useEffect(() => {
-		// Extract projectId when the component mounts
 		const currentUrl = window.location.href
 		const extractedProjectId = currentUrl.substring(currentUrl.lastIndexOf('/') + 1)
 		setProjectId(extractedProjectId)
 	}, [])
 
-	useEffect(() => {
-		if (currentUser && projectId) {
-			const fetchProjectDetails = async () => {
-				try {
-					const projectRef = doc(
-						db,
-						'users',
-						currentUser.uid,
-						'projects',
-						projectId
-					)
-					const projectDoc = await getDoc(projectRef)
+	const fetchProjectDetails = async () => {
+		try {
+			if (currentUser && projectId) {
+				const projectRef = doc(db, 'users', currentUser.uid, 'projects', projectId)
+				const projectDoc = await getDoc(projectRef)
 
-					if (projectDoc.exists()) {
-						const projectData = projectDoc.data()
-						setProject(projectData)
-						const totalTime = projectData.time || 0
-						setTotalHours(Math.floor(totalTime / 3600))
-						setTotalMinutes(Math.floor((totalTime % 3600) / 60))
-						setTotalSeconds(totalTime % 60)
-					}
-				} catch (error) {
-					console.error('Error fetching project details:', error)
-				} finally {
-					setIsLoading(false)
+				if (projectDoc.exists()) {
+					const projectData = projectDoc.data()
+					setProject(projectData)
+					setTimesheet(projectData.timesheet || [])
+					const totalTime = projectData.time || 0
+					setTotalHours(Math.floor(totalTime / 3600))
+					setTotalMinutes(Math.floor((totalTime % 3600) / 60))
+					setTotalSeconds(totalTime % 60)
 				}
 			}
-
-			fetchProjectDetails()
+		} catch (error) {
+			console.error('Error fetching project details:', error)
+		} finally {
+			setIsLoading(false)
 		}
+	}
+
+	useEffect(() => {
+		fetchProjectDetails()
 	}, [currentUser, projectId])
 
-	const handleStartTimer = () => {
+	const handleStartTimer = async () => {
 		setIsTimerRunning(true)
+
+		const currentTime = Date.now()
+
+		// Update Firestore timesheet array with 'in' timestamp
+		if (currentUser) {
+			const projectRef = doc(db, 'users', currentUser.uid, 'projects', projectId)
+			await updateDoc(projectRef, {
+				timesheet: [
+					...timesheet,
+					{ type: 'in', timestamp: currentTime }
+				]
+			})
+		}
+
+		// Update component state immediately
+		setTimesheet(prevTimesheet => [
+			...prevTimesheet,
+			{ type: 'in', timestamp: currentTime }
+		])
 
 		const sessionTimerInterval = setInterval(() => {
 			setSessionSeconds((prevSeconds) => {
@@ -90,9 +105,30 @@ const ProjectDetails = () => {
 		setSessionTimer(sessionTimerInterval)
 	}
 
+
 	const handleStopTimer = async () => {
 		setIsTimerRunning(false)
 		clearInterval(sessionTimer)
+
+		const currentTime = Date.now()
+
+		// Update Firestore timesheet array with 'out' timestamp
+		if (currentUser) {
+			const projectRef = doc(db, 'users', currentUser.uid, 'projects', projectId)
+			await updateDoc(projectRef, {
+				timesheet: [
+					...timesheet,
+					{ type: 'out', timestamp: currentTime }
+				]
+			})
+		}
+
+		// Update component state immediately with both 'in' and 'out' entries
+		setTimesheet(prevTimesheet => [
+			...prevTimesheet,
+			// { type: 'in', timestamp: currentTime },
+			{ type: 'out', timestamp: currentTime }
+		])
 
 		const sessionTimeInSeconds = sessionHours * 3600 + sessionMinutes * 60 + sessionSeconds
 		const updatedTotalTime = totalHours * 3600 + totalMinutes * 60 + totalSeconds + sessionTimeInSeconds
@@ -103,11 +139,6 @@ const ProjectDetails = () => {
 		setSessionHours(0)
 		setSessionMinutes(0)
 		setSessionSeconds(0)
-
-		if (currentUser) {
-			const projectRef = doc(db, 'users', currentUser.uid, 'projects', projectId)
-			await updateDoc(projectRef, { time: updatedTotalTime })
-		}
 	}
 
 	const formatTime = (hours, minutes, seconds) => {
@@ -136,7 +167,7 @@ const ProjectDetails = () => {
 								X
 							</button>
 							<div className="w-full mx-auto mb-4">
-								<h2 className="text-2xl font-semibold text-center mb-8 text-gray-800 underline">
+								<h2 className="text-2xl font-semibold text-center mb-4 text-gray-800 underline">
 									Project Details
 								</h2>
 								<p className="mb-2 text-base sm:text-xl text-gray-800">
@@ -155,7 +186,7 @@ const ProjectDetails = () => {
 										{formatTime(totalHours, totalMinutes, totalSeconds)}
 									</span>
 								</p>
-								<p className="mb-2 text-base sm:text-xl text-gray-800">
+								<p className=" text-base sm:text-xl text-gray-800">
 									<b>Cost:</b>{' '}
 									<span className="text-yellow-600">
 										$
@@ -166,7 +197,7 @@ const ProjectDetails = () => {
 									</span>
 								</p>
 							</div>
-							<div className="mt-4 flex flex-row items-center gap-3">
+							<div className=" flex flex-row items-center gap-3">
 								{isTimerRunning ? (
 									<button
 										className="px-4 py-2 sm:text-xl text-gray-800 border border-gray-800 bg-red-400 rounded-lg shadow-md hover:bg-red-600 font-bold"
@@ -189,6 +220,34 @@ const ProjectDetails = () => {
 									</span>
 								</p>
 							</div>
+							{/* Display timesheet */}
+							<div className='bg-neutral-300 border border-neutral-950 mt-6 w-full pb-4 rounded-lg p-2 flex flex-col mx-auto justify-center'>
+
+								<h3 className="text-lg text-center underline  font-semibold text-gray-800 mb-2">Time Card</h3>
+
+								<div className="mt-2 max-h-40 w-full mx-auto flex flex-col self-center items-center content-center overflow-y-auto">
+									<ul>
+										{timesheet.slice().reverse().map((entry, index) => (
+											<li key={index} className="text-gray-800">
+												{entry.type === 'in' && (
+													<div className='bg-neutral-950 text-white p-1 rounded-md'>
+														<span className="font-bold">In:</span> {new Date(entry.timestamp).toLocaleString()}
+													</div>
+												)}
+												{entry.type === 'out' && (
+													<div className="p-1">
+														<span className="font-bold">Out:</span> {new Date(entry.timestamp).toLocaleString()}
+													</div>
+												)}
+											</li>
+
+										))}
+									</ul>
+								</div>
+							</div>
+
+
+
 						</div>
 					) : (
 						<p className="text-center text-red-600 text-xl font-semibold">
@@ -200,8 +259,6 @@ const ProjectDetails = () => {
 			<Footer />
 		</>
 	)
-
-
 }
 
 export default ProjectDetails
