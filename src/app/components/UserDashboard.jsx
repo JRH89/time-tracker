@@ -8,6 +8,7 @@ import { doc, deleteDoc, collection, query, addDoc, onSnapshot, updateDoc } from
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { deleteUser } from 'firebase/auth'
+import Image from 'next/image'
 
 const UserDashboard = () => {
 
@@ -229,7 +230,16 @@ const UserDashboard = () => {
 				<div className="w-full max-w-4xl mx-auto p-8 bg-white shadow-black rounded-lg shadow-lg mt-4">
 					<div className="">
 						<div className="flex bg-gray-800 justify-between pl-2 pr-2 items-center fixed top-0 py-2 left-0 right-0">
-							<h1 className='font-bold md:text-3xl'>Time Tracker</h1>
+							<div className='flex flex-row align-middle'>
+								<i className='rounded-md align-middle self-center my-auto flex'><Image
+									className='rounded-sm mr-2'
+									width={18}
+									height={18}
+									src={"/favicon.ico"}
+								/></i>
+								<h1 className='font-bold md:text-3xl'>Time Tracker</h1>
+							</div>
+
 							<button onClick={openDropdown} className="rounded-full px-2 font-bold hover:scale-95 duration-200">
 								<i className="fa-solid md:text-3xl fa-bars text-transparent bg-gradient-to-b from-blue-600 via-green-600 to-red-500 bg-clip-text text-2xl" />
 							</button>

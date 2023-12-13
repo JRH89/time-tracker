@@ -9,8 +9,7 @@ import {
 import { useAuth } from '@/context/AuthProvider'
 import { useRouter } from 'next/navigation'
 import Footer from '@/app/components/Footer'
-
-// ... (Previous imports remain the same)
+import TodoList from '@/app/components/TodoList'
 
 const ProjectDetails = () => {
 	const { currentUser } = useAuth()
@@ -67,33 +66,31 @@ const ProjectDetails = () => {
 
 		const currentTime = Date.now()
 
-		// Update Firestore timesheet array with 'in' timestamp
 		if (currentUser) {
 			const projectRef = doc(db, 'users', currentUser.uid, 'projects', projectId)
 			await updateDoc(projectRef, {
 				timesheet: [
 					...timesheet,
-					{ type: 'in', timestamp: currentTime }
-				]
+					{ type: 'in', timestamp: currentTime },
+				],
 			})
 		}
 
-		// Update component state immediately
 		setTimesheet(prevTimesheet => [
 			...prevTimesheet,
-			{ type: 'in', timestamp: currentTime }
+			{ type: 'in', timestamp: currentTime },
 		])
 
 		const sessionTimerInterval = setInterval(() => {
-			setSessionSeconds((prevSeconds) => {
+			setSessionSeconds(prevSeconds => {
 				let newSeconds = prevSeconds + 1
 				if (newSeconds === 60) {
 					newSeconds = 0
-					setSessionMinutes((prevMinutes) => {
+					setSessionMinutes(prevMinutes => {
 						let newMinutes = prevMinutes + 1
 						if (newMinutes === 60) {
 							newMinutes = 0
-							setSessionHours((prevHours) => prevHours + 1)
+							setSessionHours(prevHours => prevHours + 1)
 						}
 						return newMinutes
 					})
@@ -105,20 +102,15 @@ const ProjectDetails = () => {
 		setSessionTimer(sessionTimerInterval)
 	}
 
-
 	const handleStopTimer = async () => {
 		setIsTimerRunning(false)
 		clearInterval(sessionTimer)
 
 		const currentTime = Date.now()
 
-		// Update Firestore timesheet array with 'out' timestamp
-
-		// Update component state immediately with both 'in' and 'out' entries
 		setTimesheet(prevTimesheet => [
 			...prevTimesheet,
-			// { type: 'in', timestamp: currentTime },
-			{ type: 'out', timestamp: currentTime }
+			{ type: 'out', timestamp: currentTime },
 		])
 
 		const sessionTimeInSeconds = sessionHours * 3600 + sessionMinutes * 60 + sessionSeconds
@@ -129,13 +121,11 @@ const ProjectDetails = () => {
 			await updateDoc(projectRef, {
 				timesheet: [
 					...timesheet,
-
-					{ type: 'out', timestamp: currentTime }
+					{ type: 'out', timestamp: currentTime },
 				],
 				time: (project.time ?? 0) + sessionTimeInSeconds,
 			})
 		}
-
 
 		setTotalHours(Math.floor(updatedTotalTime / 3600))
 		setTotalMinutes(Math.floor((updatedTotalTime % 3600) / 60))
@@ -154,105 +144,115 @@ const ProjectDetails = () => {
 
 	return (
 		<>
-			<div className="bg-stone-300 min-h-screen flex  justify-center items-center px-2">
-				<div className="max-w-4xl p-8 bg-white shadow-black rounded-lg shadow-lg">
+			<div className="bg-stone-300 min-h-screen flex   justify-center items-center px-2 py-4">
+				<div className=" p-8 bg-white shadow-black rounded-lg shadow-lg">
 					{isLoading ? (
 						<p className="text-center text-gray-800 text-xl font-semibold">
 							Loading project details...
 						</p>
 					) : project ? (
-						<div className="mx-auto flex flex-col items-center">
-							<button
-								className="fixed top-1 right-1 mt-2 mr-2 bg-red-400 text-gray-800 rounded-lg px-3 py-1 font-bold hover:bg-red-600 text-xl"
-								onClick={() => {
-									router.push('/')
-								}}
-							>
-								X
-							</button>
-							<div className="w-full mx-auto mb-4">
-								<h2 className="text-2xl font-semibold text-center mb-4 text-gray-800 underline">
+						<>
+							<div className="mx-auto flex flex-col items-center">
+								<button
+									className="fixed top-1 right-1 mt-2 mr-2 bg-red-400 text-gray-800 rounded-lg px-3 py-1 font-bold hover:bg-red-600 text-xl"
+									onClick={() => router.push('/')}
+								>
+									X
+								</button>
+								<h2 className="text-xl font-semibold text-center mb-4 text-gray-800">
 									Project Details
 								</h2>
-								<p className="mb-2 text-base sm:text-xl text-gray-800">
-									<b>Title:</b> {project.title}
-								</p>
-								<p className="mb-2 text-base sm:text-xl text-gray-800">
-									<b>Desc:</b> {project.description}
-								</p>
-								<p className="mb-2 text-base sm:text-xl text-gray-800">
-									<b>Hourly:</b>{' '}
-									<span className="text-yellow-600">${project.hourlyRate}</span>
-								</p>
-								<p className="mb-2 text-base sm:text-xl text-gray-800">
-									<b>Time:</b>{' '}
-									<span className="text-green-600">
-										{formatTime(totalHours, totalMinutes, totalSeconds)}
-									</span>
-								</p>
-								<p className=" text-base sm:text-xl text-gray-800">
-									<b>Cost:</b>{' '}
-									<span className="text-yellow-600">
-										$
-										{(
-											project.hourlyRate *
-											((totalHours + totalMinutes / 60 + totalSeconds / 3600) / 10)
-										).toFixed(2)}
-									</span>
-								</p>
-							</div>
-							<div className=" flex flex-row items-center gap-3">
-								{isTimerRunning ? (
-									<button
-										className="px-4 py-2 sm:text-xl text-gray-800 border border-gray-800 bg-red-400 rounded-lg shadow-md hover:bg-red-600 font-bold"
-										onClick={handleStopTimer}
-									>
-										Clock Out
-									</button>
-								) : (
-									<button
-										className="px-4 py-2 sm:text-xl text-gray-800 bg-green-400 rounded-lg shadow-md hover:bg-green-600 font-bold border border-gray-800"
-										onClick={handleStartTimer}
-									>
-										Clock In
-									</button>
-								)}
-								<p className="text-neutral-300 sm:text-xl p-2 bg-gray-800 rounded-lg border border-green-400">
-									<b>Session:</b>{' '}
-									<span className="text-green-600">
-										{formatTime(sessionHours, sessionMinutes, sessionSeconds)}
-									</span>
-								</p>
-							</div>
-							{/* Display timesheet */}
-							<div className='bg-neutral-300 border border-neutral-950 mt-6 w-full pb-4 rounded-lg p-2 flex flex-col mx-auto justify-center'>
+								<div className=' flex flex-col md:flex-row gap-3'>
 
-								<h3 className="text-lg text-center underline  font-semibold text-gray-800 mb-2">Time Card</h3>
+									<div className=" flex flex-0 px-2 bg-neutral-300 rounded-md border border-gray-800 w-full h-auto">
+										<div className='self-center text-left justify-center flex flex-col mx-auto my-auto w-full'>
 
-								<div className="mt-2 max-h-40 w-full mx-auto flex flex-col self-center items-center content-center overflow-y-auto">
-									<ul>
-										{timesheet.slice().reverse().map((entry, index) => (
-											<li key={index} className="text-gray-800">
-												{entry.type === 'in' && (
-													<div className='bg-neutral-950 text-white p-1 rounded-md'>
-														<span className="font-bold">In:</span> {new Date(entry.timestamp).toLocaleString()}
-													</div>
-												)}
-												{entry.type === 'out' && (
-													<div className="p-1">
-														<span className="font-bold">Out:</span> {new Date(entry.timestamp).toLocaleString()}
-													</div>
-												)}
-											</li>
+											<p className="text-lg pb-2  text-center underline  font-semibold text-gray-800 mb-2 ">Summary</p>
+											<div className='pt-12 pb-2'>
 
-										))}
-									</ul>
+												<p className="mb-2 text-base  text-gray-800">
+													<b>Title:</b> {project.title}
+												</p>
+												<p className="mb-2 text-base  text-gray-800">
+													<b>Desc:</b> {project.description}
+												</p>
+												<p className="mb-2 text-base  text-gray-800">
+													<b>Hourly:</b>{' '}
+													<span className="text-yellow-600">${project.hourlyRate}</span>
+												</p>
+												<p className="mb-2 text-base  text-gray-800">
+													<b>Time:</b>{' '}
+													<span className="text-green-600">
+														{formatTime(totalHours, totalMinutes, totalSeconds)}
+													</span>
+												</p>
+												<p className=" text-base  text-gray-800">
+													<b>Cost:</b>{' '}
+													<span className="text-yellow-600">
+														$
+														{(
+															project.hourlyRate *
+															((totalHours + totalMinutes / 60 + totalSeconds / 3600) / 10)
+														).toFixed(2)}
+													</span>
+												</p>
+											</div>
+
+										</div>
+									</div>
+
+									<div id='todo' className='w-full justify-center self-center align-middle'>
+										<TodoList projectId={projectId} currentUser={currentUser} />
+									</div>
+									<div className='w-full mx-auto h-full  my-auto items-center align-middle self-center'>
+										{/* Display timesheet */}
+										<div id='timecard' className='bg-neutral-300 py-4 border h-full self-center my-auto  border-neutral-950  w-full align-middle rounded-lg p-2 flex flex-col mx-auto justify-center'>
+											<h3 className="text-lg pb-2  text-center underline  font-semibold text-gray-800 mb-2 ">Time Card</h3>
+											<ul className='max-h-60 h-40 overflow-y-auto text-sm mt-12 mb-2'>
+												{timesheet.slice().reverse().map((entry, index) => (
+													<li key={index} className="text-gray-800">
+														{entry.type === 'in' && (
+															<div className='bg-neutral-950 text-white p-1 rounded-md'>
+																<span className="font-bold">In:</span> {new Date(entry.timestamp).toLocaleString()}
+															</div>
+														)}
+														{entry.type === 'out' && (
+															<div className="p-1">
+																<span className="font-bold">Out:</span> {new Date(entry.timestamp).toLocaleString()}
+															</div>
+														)}
+													</li>
+												))}
+											</ul>
+
+										</div>
+									</div>
+								</div>
+								<div className="mx-auto w-full justify-center flex flex-row items-center self-center md:ml-2 gap-3 mt-4">
+									{isTimerRunning ? (
+										<button
+											className="px-4 py-2 sm:text-xl text-gray-800 border border-gray-800 bg-red-400 rounded-lg shadow-md hover:bg-red-600 font-bold"
+											onClick={handleStopTimer}
+										>
+											Clock Out
+										</button>
+									) : (
+										<button
+											className="px-4 py-2 sm:text-xl text-gray-800 bg-green-400 rounded-lg shadow-md hover:bg-green-600 font-bold border border-gray-800"
+											onClick={handleStartTimer}
+										>
+											Clock In
+										</button>
+									)}
+									<p className="text-neutral-300 sm:text-xl p-2 bg-gray-800 rounded-lg border border-green-400">
+										<b>Session:</b>{' '}
+										<span className="text-green-600">
+											{formatTime(sessionHours, sessionMinutes, sessionSeconds)}
+										</span>
+									</p>
 								</div>
 							</div>
-
-
-
-						</div>
+						</>
 					) : (
 						<p className="text-center text-red-600 text-xl font-semibold">
 							Project not found
