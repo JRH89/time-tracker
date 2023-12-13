@@ -113,15 +113,6 @@ const ProjectDetails = () => {
 		const currentTime = Date.now()
 
 		// Update Firestore timesheet array with 'out' timestamp
-		if (currentUser) {
-			const projectRef = doc(db, 'users', currentUser.uid, 'projects', projectId)
-			await updateDoc(projectRef, {
-				timesheet: [
-					...timesheet,
-					{ type: 'out', timestamp: currentTime }
-				]
-			})
-		}
 
 		// Update component state immediately with both 'in' and 'out' entries
 		setTimesheet(prevTimesheet => [
@@ -132,6 +123,19 @@ const ProjectDetails = () => {
 
 		const sessionTimeInSeconds = sessionHours * 3600 + sessionMinutes * 60 + sessionSeconds
 		const updatedTotalTime = totalHours * 3600 + totalMinutes * 60 + totalSeconds + sessionTimeInSeconds
+
+		if (currentUser) {
+			const projectRef = doc(db, 'users', currentUser.uid, 'projects', projectId)
+			await updateDoc(projectRef, {
+				timesheet: [
+					...timesheet,
+
+					{ type: 'out', timestamp: currentTime }
+				],
+				time: (project.time ?? 0) + sessionTimeInSeconds,
+			})
+		}
+
 
 		setTotalHours(Math.floor(updatedTotalTime / 3600))
 		setTotalMinutes(Math.floor((updatedTotalTime % 3600) / 60))
