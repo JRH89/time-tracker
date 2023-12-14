@@ -1,4 +1,5 @@
 'use client'
+
 import React, { useState, useEffect } from 'react'
 import { auth, db } from '../../../firebase'
 import {
@@ -6,19 +7,11 @@ import {
 	getDoc,
 	updateDoc,
 } from 'firebase/firestore'
-import { Toast, showToast } from 'ui-hook-react-lib'
-import 'ui-hook-react-lib/dist/bundle.css'
-
 
 const TodoList = ({ projectId, currentUser }) => {
 	const [todos, setTodos] = useState([])
 	const [newTodo, setNewTodo] = useState('')
 	const [showTodos, setShowTodos] = useState(false)
-	const [toastList, setToastList] = useState([])
-
-	const handleShowToast = (type, message, duration) => {
-		showToast(setToastList, type, message, duration)
-	}
 
 	useEffect(() => {
 		// Fetch ToDo list from Firestore when the component mounts
@@ -88,10 +81,9 @@ const TodoList = ({ projectId, currentUser }) => {
 		}
 	}
 
-
 	return (
 		<div className='bg-neutral-300 flex-1 px-2 py-4 rounded-md border border-gray-800 flex flex-col'>
-			<Toast toastList={toastList || []} position='bottom-right' setList={setToastList} />
+
 
 			<h3 onClick={() => setShowTodos(!showTodos)} className="cursor-pointer hover:scale-95 duration-200 text-lg text-center underline font-semibold text-gray-800 mb-2">ToDo</h3>
 			{showTodos &&
@@ -105,16 +97,12 @@ const TodoList = ({ projectId, currentUser }) => {
 							className="border border-gray-400 text-gray-800 p-2 rounded-lg flex-grow"
 						/>
 						<button
-							onClick={() => {
-								addTodo()
-								handleShowToast('success', 'Todo added successfully!', 2000)
-							}}
+							onClick={addTodo}
 							className="px-4 py-2 font-bold bg-blue-400 border border-gray-800 text-gray-800 rounded-lg hover:bg-blue-600"
 						>
 							Add
 						</button>
 					</div>
-
 					<ul className='h-40 max-h-60 pb-4 overflow-y-auto overflow-x-hidden'>
 						{todos.map((todo, index) => (
 							<li
@@ -127,12 +115,10 @@ const TodoList = ({ projectId, currentUser }) => {
 									<i className='fa fa-xmark px-2 hover:rotate-90 duration-300'></i>
 								</button>
 							</li>
-
-
 						))}
-					</ul></>
+					</ul>
+				</>
 			}
-
 		</div>
 	)
 }
