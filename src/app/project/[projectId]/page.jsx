@@ -27,6 +27,8 @@ const ProjectDetails = () => {
 	const [isTimerRunning, setIsTimerRunning] = useState(false)
 	const [isLoading, setIsLoading] = useState(true)
 	const [timesheet, setTimesheet] = useState([])
+	const [showTimeCard, setShowTimeCard] = useState(false)
+	const [showSummary, setShowSummary] = useState(true)
 
 	useEffect(() => {
 		const currentUrl = window.location.href
@@ -144,7 +146,7 @@ const ProjectDetails = () => {
 
 	return (
 		<>
-			<div className="bg-stone-300 min-h-screen flex   justify-center items-center px-2 py-4">
+			<div className="bg-stone-300 min-h-screen flex w-full mx-auto my-auto justify-center items-center px-2 py-4">
 				<div className=" p-8 bg-white shadow-black rounded-lg shadow-lg">
 					{isLoading ? (
 						<p className="text-center text-gray-800 text-xl font-semibold">
@@ -160,70 +162,72 @@ const ProjectDetails = () => {
 									X
 								</button>
 								<h2 className="text-xl font-semibold text-center mb-4 text-gray-800">
-									Project Details
+									{project.title}
 								</h2>
-								<div className=' flex flex-col md:flex-row gap-3'>
+								<div className='w-full h-full flex flex-col gap-3'>
 
-									<div className=" flex flex-0 px-2 bg-neutral-300 rounded-md border border-gray-800 w-full h-auto">
+									<div className=" flex flex-1  bg-neutral-300 rounded-md border border-gray-800 w-full h-auto">
 										<div className='self-center text-left justify-center flex flex-col mx-auto my-auto w-full'>
+											<p onClick={() => setShowSummary(!showSummary)} className="text-lg cursor-pointer hover:scale-95 duration-200 text-center underline  font-semibold text-gray-800 mb-2 pt-1">About</p>
 
-											<p className="text-lg pb-2  text-center underline  font-semibold text-gray-800 mb-2 ">Summary</p>
-											<div className='pt-12 pb-2'>
+											{showSummary && <>
+												<div className='md:pt-12 pb-2 px-2'>
+													<p className="mb-2 text-base  text-gray-800">
+														<b>About:</b> {project.description}
+													</p>
+													<p className="mb-2 text-base  text-gray-800">
+														<b>Hourly:</b>{' '}
+														<span className="text-yellow-600">${project.hourlyRate}</span>
+													</p>
+													<p className="mb-2 text-base  text-gray-800">
+														<b>Time:</b>{' '}
+														<span className="text-green-600">
+															{formatTime(totalHours, totalMinutes, totalSeconds)}
+														</span>
+													</p>
+													<p className=" text-base  text-gray-800">
+														<b>Cost:</b>{' '}
+														<span className="text-yellow-600">
+															$
+															{(
+																project.hourlyRate *
+																((totalHours + totalMinutes / 60 + totalSeconds / 3600) / 10)
+															).toFixed(2)}
+														</span>
+													</p>
+												</div>
+											</>}
 
-												<p className="mb-2 text-base  text-gray-800">
-													<b>Title:</b> {project.title}
-												</p>
-												<p className="mb-2 text-base  text-gray-800">
-													<b>Desc:</b> {project.description}
-												</p>
-												<p className="mb-2 text-base  text-gray-800">
-													<b>Hourly:</b>{' '}
-													<span className="text-yellow-600">${project.hourlyRate}</span>
-												</p>
-												<p className="mb-2 text-base  text-gray-800">
-													<b>Time:</b>{' '}
-													<span className="text-green-600">
-														{formatTime(totalHours, totalMinutes, totalSeconds)}
-													</span>
-												</p>
-												<p className=" text-base  text-gray-800">
-													<b>Cost:</b>{' '}
-													<span className="text-yellow-600">
-														$
-														{(
-															project.hourlyRate *
-															((totalHours + totalMinutes / 60 + totalSeconds / 3600) / 10)
-														).toFixed(2)}
-													</span>
-												</p>
-											</div>
 
 										</div>
 									</div>
 
-									<div id='todo' className='w-full justify-center self-center align-middle'>
+									<div id='todo' className='w-full flex  flex-1 justify-center self-center align-middle'>
 										<TodoList projectId={projectId} currentUser={currentUser} />
 									</div>
-									<div className='w-full mx-auto h-full  my-auto items-center align-middle self-center'>
+									<div className='w-full mx-auto h-full flex flex-1 my-auto items-center align-middle self-center'>
 										{/* Display timesheet */}
-										<div id='timecard' className='bg-neutral-300 py-4 border h-full self-center my-auto  border-neutral-950  w-full align-middle rounded-lg p-2 flex flex-col mx-auto justify-center'>
-											<h3 className="text-lg pb-2  text-center underline  font-semibold text-gray-800 mb-2 ">Time Card</h3>
-											<ul className='max-h-60 h-40 overflow-y-auto text-sm mt-12 mb-2'>
-												{timesheet.slice().reverse().map((entry, index) => (
-													<li key={index} className="text-gray-800">
-														{entry.type === 'in' && (
-															<div className='bg-neutral-950 text-white p-1 rounded-md'>
-																<span className="font-bold">In:</span> {new Date(entry.timestamp).toLocaleString()}
-															</div>
-														)}
-														{entry.type === 'out' && (
-															<div className="p-1">
-																<span className="font-bold">Out:</span> {new Date(entry.timestamp).toLocaleString()}
-															</div>
-														)}
-													</li>
-												))}
-											</ul>
+										<div id='timecard' className='bg-neutral-300 py-4 border  h-full self-center my-auto  border-neutral-950  w-full align-middle rounded-lg p-2 flex flex-col mx-auto justify-center'>
+											<h3 onClick={() => setShowTimeCard(!showTimeCard)} className="text-lg cursor-pointer hover:scale-95 duration-200 text-center underline  font-semibold text-gray-800 mb-2 ">Time</h3>
+											{showTimeCard && <>
+												<ul className='max-h-60 h-40 overflow-y-auto text-sm  md:mt-12 mb-2'>
+													{timesheet.slice().reverse().map((entry, index) => (
+														<li key={index} className="text-gray-800">
+															{entry.type === 'in' && (
+																<div className='bg-neutral-950 text-white p-1 rounded-md'>
+																	<span className="font-bold">In:</span> {new Date(entry.timestamp).toLocaleString()}
+																</div>
+															)}
+															{entry.type === 'out' && (
+																<div className="p-1">
+																	<span className="font-bold">Out:</span> {new Date(entry.timestamp).toLocaleString()}
+																</div>
+															)}
+														</li>
+													))}
+												</ul>
+											</>}
+
 
 										</div>
 									</div>
