@@ -99,13 +99,13 @@ const TodoList = ({ projectId, currentUser }) => {
 						/>
 						<button
 							onClick={addTodo}
-							className="px-4 py-2 bg-blue-400 border border-gray-800 text-gray-800 rounded-lg hover:bg-blue-600"
+							className="px-4 py-2 font-bold bg-blue-400 border border-gray-800 text-gray-800 rounded-lg hover:bg-blue-600"
 						>
 							Add
 						</button>
 					</div>
 
-					<ul className='h-40 max-60 pb-4 overflow-y-auto overflow-x-hidden'>
+					<ul className='h-40 max-h-60 pb-4 overflow-y-auto overflow-x-hidden'>
 						{todos.map((todo, index) => (
 							<li
 								key={index}

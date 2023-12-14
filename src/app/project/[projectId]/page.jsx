@@ -165,13 +165,12 @@ const ProjectDetails = () => {
 									{project.title}
 								</h2>
 								<div className='w-full h-full flex flex-col gap-3'>
-
 									<div className=" flex flex-1  bg-neutral-300 rounded-md border border-gray-800 w-full h-auto">
 										<div className='self-center text-left justify-center flex flex-col mx-auto my-auto w-full'>
 											<p onClick={() => setShowSummary(!showSummary)} className="text-lg cursor-pointer hover:scale-95 duration-200 text-center underline  font-semibold text-gray-800 mb-2 pt-1">About</p>
 
 											{showSummary && <>
-												<div className='md:pt-12 pb-2 px-2'>
+												<div className='pb-2 px-2'>
 													<p className="mb-2 text-base  text-gray-800">
 														<b>About:</b> {project.description}
 													</p>
@@ -197,11 +196,8 @@ const ProjectDetails = () => {
 													</p>
 												</div>
 											</>}
-
-
 										</div>
 									</div>
-
 									<div id='todo' className='w-full flex  flex-1 justify-center self-center align-middle'>
 										<TodoList projectId={projectId} currentUser={currentUser} />
 									</div>
@@ -210,7 +206,7 @@ const ProjectDetails = () => {
 										<div id='timecard' className='bg-neutral-300 py-4 border  h-full self-center my-auto  border-neutral-950  w-full align-middle rounded-lg p-2 flex flex-col mx-auto justify-center'>
 											<h3 onClick={() => setShowTimeCard(!showTimeCard)} className="text-lg cursor-pointer hover:scale-95 duration-200 text-center underline  font-semibold text-gray-800 mb-2 ">Time</h3>
 											{showTimeCard && <>
-												<ul className='max-h-60 h-40 overflow-y-auto text-sm  md:mt-12 mb-2'>
+												<ul className='max-h-60 h-40 overflow-y-auto text-sm mb-2'>
 													{timesheet.slice().reverse().map((entry, index) => (
 														<li key={index} className="text-gray-800">
 															{entry.type === 'in' && (
@@ -227,8 +223,6 @@ const ProjectDetails = () => {
 													))}
 												</ul>
 											</>}
-
-
 										</div>
 									</div>
 								</div>
