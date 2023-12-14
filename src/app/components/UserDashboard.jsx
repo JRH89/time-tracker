@@ -241,7 +241,7 @@ const UserDashboard = () => {
 							</div>
 
 							<button onClick={openDropdown} className="rounded-full px-2 font-bold hover:scale-95 duration-200">
-								<i className="fa-solid md:text-3xl fa-bars text-transparent bg-gradient-to-b from-blue-600 via-green-600 to-red-500 bg-clip-text text-2xl" />
+								<i className="fa-solid align-middle self-center my-auto md:text-3xl fa-bars text-transparent bg-gradient-to-b from-blue-600 via-green-600 to-red-500 bg-clip-text text-2xl" />
 							</button>
 						</div>
 						{isDropdownOpen && (
