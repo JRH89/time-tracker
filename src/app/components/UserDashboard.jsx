@@ -234,6 +234,7 @@ const UserDashboard = () => {
 								<i className='rounded-md align-middle self-center my-auto flex'><Image
 									className='rounded-sm mr-2'
 									width={18}
+									alt='icon'
 									height={18}
 									src={"/favicon.ico"}
 								/></i>
@@ -247,6 +248,12 @@ const UserDashboard = () => {
 						{isDropdownOpen && (
 							<div className='p-4 bg-gray-800 fixed top-12 md:top-14 right-1 rounded-lg shadow-lg'>
 								<div className='flex flex-col gap-3'>
+									<Link
+										className='bg-blue-400 text-center p-1 rounded-md hover:bg-blue-600 text-gray-800'
+
+										href={'https://resolved.hookerhillstudios.com/Support/Hj3U9zIg3pQd2DGsA4Uvs95uUje2'}>
+										Help
+									</Link>
 									<button
 										className='bg-green-400 p-1 rounded-md hover:bg-green-600 text-gray-800'
 										onClick={handleLogout}
